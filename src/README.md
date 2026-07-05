@@ -13,6 +13,7 @@
 | [Python SDK](sdk/) | Python 包 | 工具 | 编程式 API 客户端 |
 | [StepFlow](langflow-stepflow/) | Python 包 | 引擎 | 步骤化工作流编排引擎 |
 | [扩展包](bundles/) | Python 包 × N | 插件 | 独立发布的组件扩展包 |
+| [图数据库](neo4j/) | Python 模块 | 工具 | Memgraph / Neo4j 连接客户端 |
 
 ## 模块依赖关系
 
@@ -28,6 +29,9 @@ bundles/* (独立扩展包，通过入口点注入)
 langflow-sdk (API 客户端，可独立使用)
   ↑
 lfx (CLI 执行器，可独立安装)
+
+src/neo4j/ (独立模块 — pyproject.toml 直接依赖)
+  → 使用 neo4j Python driver + langchain_community.graphs.Neo4jGraph
 ```
 
 ## 各个模块详细说明
@@ -75,6 +79,25 @@ Python API 客户端，用于编程式调用 Langflow：
 - Docling — 文档解析
 - DuckDuckGo — 网页搜索
 - IBM Watsonx — AI 模型 + 向量存储
+- **Memgraph/Neo4j** — 图数据库 Cypher 查询组件 ([memgraph/](bundles/memgraph/))
+  - `MemgraphCypherComponent` — 执行 Cypher 并返回 DataFrame
+  - 兼容 Memgraph 零认证 + Neo4j 认证模式
+
+### [图数据库 (`neo4j/`)](neo4j/)
+
+Memgraph / Neo4j 图数据库连接客户端，基于 `neo4j` 原生驱动：
+
+- 兼容 Memgraph 零认证模式
+- Cypher 查询 / 写入 / 批量操作
+- 图 Schema 探索
+- 本体模型批量导入：`import_model()` / `import_attrs()`
+- 全局单例：`get_graph_db()`
+
+```python
+from client import get_graph_db
+db = get_graph_db()
+db.query("MATCH (n) RETURN n LIMIT 10")
+```
 
 ## 开发
 

@@ -1,12 +1,7 @@
 import { useTranslation } from "react-i18next";
-import { FaDiscord, FaGithub } from "react-icons/fa";
-import { ForwardedIconComponent } from "@/components/common/genericIconComponent";
 import {
   DATASTAX_DOCS_URL,
-  DISCORD_URL,
   DOCS_URL,
-  GITHUB_URL,
-  TWITTER_URL,
 } from "@/constants/constants";
 import { useLogout } from "@/controllers/API/queries/auth";
 import { CustomProfileIcon } from "@/customization/components/custom-profile-icon";
@@ -130,40 +125,27 @@ export const AccountMenu = () => {
           </div>
 
           <div>
-            <HeaderMenuItemLink newPage href={GITHUB_URL}>
-              <span
-                data-testid="menu_github_button"
-                id="menu_github_button"
-                className="flex items-center gap-2"
-              >
-                <FaGithub className="h-4 w-4" />
-                {t("account.github")}
+            <HeaderMenuItemButton
+              onClick={() => navigate("/ontol-semantic")}
+            >
+              <span className="flex items-center gap-2">
+                本体语义
               </span>
-            </HeaderMenuItemLink>
-            <HeaderMenuItemLink newPage href={DISCORD_URL}>
-              <span
-                data-testid="menu_discord_button"
-                id="menu_discord_button"
-                className="flex items-center gap-2"
-              >
-                <FaDiscord className="h-4 w-4 text-[#5865F2]" />
-                {t("account.discord")}
+            </HeaderMenuItemButton>
+            <HeaderMenuItemButton
+              onClick={() => navigate("/ontol-modeling")}
+            >
+              <span className="flex items-center gap-2">
+                本体建模
               </span>
-            </HeaderMenuItemLink>
-            <HeaderMenuItemLink newPage href={TWITTER_URL}>
-              <span
-                data-testid="menu_twitter_button"
-                id="menu_twitter_button"
-                className="flex items-center gap-2"
-              >
-                <ForwardedIconComponent
-                  strokeWidth={2}
-                  name="TwitterX"
-                  className="h-4 w-4"
-                />
-                {t("account.twitter")}
+            </HeaderMenuItemButton>
+            <HeaderMenuItemButton
+              onClick={() => navigate("/ontol-sandbox")}
+            >
+              <span className="flex items-center gap-2">
+                沙盘推演
               </span>
-            </HeaderMenuItemLink>
+            </HeaderMenuItemButton>
           </div>
 
           <div className="flex items-center justify-between px-4 py-[6.5px] text-sm">

@@ -42,6 +42,7 @@ OntoL-langflow-web-Agent/
 │   ├── frontend/                # React/TypeScript 前端
 │   ├── lfx/                     # 轻量级执行器 CLI
 │   ├── sdk/                     # Python SDK
+│   ├── neo4j/                   # 图数据库连接模块（Memgraph / Neo4j）
 │   ├── langflow-stepflow/       # StepFlow 编排引擎
 │   └── bundles/                 # 扩展组件包
 │
@@ -167,7 +168,32 @@ src/sdk/src/langflow_sdk/
 
 工作流编排引擎，提供步骤化的流程编排能力。
 
-### 6. 扩展组件包 (`src/bundles/`)
+### 6. 图数据库模块 (`src/neo4j/`)
+
+Memgraph / Neo4j 连接客户端，基于 `neo4j` 原生驱动：
+
+```
+src/neo4j/
+├── __init__.py        # 导出 GraphDatabaseClient, get_graph_db
+└── client.py          # 图数据库连接、Cypher 查询、Schema 管理、批量导入
+```
+
+**关键能力：**
+- 兼容 Memgraph 零认证模式（空用户名密码）
+- Cypher 查询 / 写入 / 批量操作
+- 图 Schema 探索（节点标签 + 关系类型）
+- 本体模型导入：`import_model()` / `import_attrs()`
+- 全局单例模式：`get_graph_db()`
+
+**环境变量：**
+
+| 变量 | 默认值 | 说明 |
+|------|--------|------|
+| `MEMGRAPH_URL` | `bolt://localhost:7687` | 图数据库 Bolt 连接 |
+| `MEMGRAPH_USERNAME` | (空) | Memgraph 默认空，Neo4j 默认 neo4j |
+| `MEMGRAPH_PASSWORD` | (空) | Memgraph 默认空，Neo4j 默认 neo4j |
+
+### 7. 扩展组件包 (`src/bundles/`)
 
 独立发布的组件扩展包：
 
@@ -208,6 +234,117 @@ FastAPI 路由层 (api/v1, api/v2)
   ▼
 响应 (JSON / SSE / WebSocket)
 ```
+
+## 数据库架构
+
+Langflow 使用 **SQLite** 嵌入式关系型数据库，无需单独安装数据库服务即可运行。
+
+### 数据库文件位置
+
+```
+src/backend/base/langflow/langflow.db        # 正式版本
+src/backend/base/langflow/langflow-pre.db     # 预发布版本
+```
+
+### 技术层
+
+| 层级 | 技术 | 说明 |
+|------|------|------|
+| 数据库 | SQLite | 嵌入式关系型数据库，零配置 |
+| ORM | SQLAlchemy 2.x + SQLModel | 异步会话，声明式模型 |
+| 迁移 | Alembic | 自动迁移生成与版本管理 |
+| 驱动 | aiosqlite | 异步 SQLite 驱动 |
+| 配置 | `DatabaseSettings` (Pydantic) | 连接池、PRAGMA 参数等 |
+
+### 表结构（34 张表）
+
+| 分类 | 表名 | 说明 |
+|------|------|------|
+| 用户认证 | `user`, `apikey`, `sso_config`, `sso_user_profile` | 用户、API 密钥、SSO |
+| 权限控制 | `authz_role`, `authz_role_assignment`, `authz_team`, `authz_team_member`, `authz_share`, `authz_edit_lock`, `authz_audit_log`, `casbin_rule` | RBAC 角色权限体系 |
+| 核心工作流 | `flow` | **核心表** — 工作流定义（含 JSON 数据） |
+| 版本管理 | `flow_version`, `flow_version_deployment_attachment` | Flow 版本快照与部署关联 |
+| 文件夹 | `folder` | 文件夹/项目（支持树形嵌套） |
+| 部署 | `deployment`, `deployment_provider_account` | Flow 部署配置与提供商 |
+| 知识库 | `knowledge_base`, `ingestion_run` | 知识库定义与文档摄入 |
+| 记忆 | `memory_base`, `memory_base_session`, `memory_base_workflow_run`, `memory_base_preprocessing_output` | 记忆存储与会话 |
+| 消息 | `message`, `message_ingestion_record` | Flow 执行聊天消息 |
+| 追踪 | `trace`, `span`, `transaction` | 执行追踪与事务日志 |
+| 任务 | `job`, `vertex_build` | 后台任务与组件编译 |
+| 文件 | `file` | 上传文件管理 |
+| 变量 | `variable` | 全局环境变量 |
+| 迁移 | `alembic_version` | 数据库迁移版本号 |
+
+### 核心表关系
+
+```
+user ──1:N──▶ flow ──1:N──▶ flow_version ──N:M──▶ deployment
+  │              │
+  │              └──▶ message / trace / transaction / vertex_build
+  │
+  ├──1:N──▶ folder ──1:N──▶ flow / deployment
+  ├──1:N──▶ apikey / file / variable / knowledge_base / memory_base
+  └──N:M──▶ authz_role (via authz_role_assignment)
+```
+
+### 模型文件目录
+
+```
+src/backend/base/langflow/services/database/models/
+├── user/           # 用户模型
+├── api_key/        # API 密钥模型
+├── auth/           # 权限控制模型（RBAC + SSO）
+├── flow/           # 工作流模型（核心）
+├── flow_version/   # Flow 版本模型
+├── folder/         # 文件夹模型
+├── deployment/     # 部署模型
+├── deployment_provider_account/  # 部署提供商模型
+├── knowledge_base/ # 知识库模型
+├── message/        # 消息模型
+├── memory_base/    # 记忆模型
+├── traces/         # 追踪模型
+├── transactions/   # 事务模型
+├── jobs/           # 任务模型
+├── vertex_builds/  # 组件编译构建模型
+├── file/           # 文件模型
+├── variable/       # 全局变量模型
+└── base.py         # 基类定义
+```
+
+> 📖 完整表结构、字段说明、ER 关系图、迁移命令见 [docs/backend/DATABASE.md](docs/backend/DATABASE.md)
+
+### 独立本体表（OntoL 扩展）
+
+以下表由用户手工 SQL 创建，**不在 Alembic 管理范围内**（[alembic/env.py](src/backend/base/langflow/alembic/env.py) 中通过 `include_object` 过滤）。API 通过 `DatabaseService` → SQLite 直连操作。
+
+| 表名 | 说明 | API 路由 |
+|------|------|----------|
+| `ontol_model` | 本体模板表（树形 id/parent_id） | `/api/v1/ontology-models` |
+| `ontol_model_attr` | 模板字段属性表（FK → ontol_model） | `/api/v1/ontology-models/{id}/attrs` |
+| `ontol_model_scene` | 场景定义表 | `/api/v1/ontology-scenes` |
+| `ontol_node_scene_relation` | 节点-场景关联表 | `/api/v1/ontology-node-scene-relations` |
+| `ontol_char_scene_relation` | 对话-场景关联表 | `/api/v1/ontology-char-scene-relations` |
+| `ontol_data_his` | 历史记录表（JSON context） | `/api/v1/ontology-data-his` |
+
+Alembic 过滤配置（每次建表必须更新）：
+
+```python
+ONTOL_TABLES = frozenset({
+    "ontol_model", "ontol_model_attr", "ontol_model_scene",
+    "ontol_node_scene_relation", "ontol_char_scene_relation", "ontol_data_his",
+})
+
+def include_object(obj, name, type_, reflected, compare_to):
+    if type_ == "table" and name in ONTOL_TABLES:
+        return False
+    return True
+```
+
+### 图数据库
+
+| 数据库 | 连接方式 | 配置 |
+|--------|----------|------|
+| Memgraph / Neo4j | `src/neo4j/client.py` → `neo4j` 原生驱动 | `MEMGRAPH_URL=bolt://localhost:7687` |
 
 ## 安全架构
 

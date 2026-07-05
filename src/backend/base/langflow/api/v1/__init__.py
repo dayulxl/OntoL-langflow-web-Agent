@@ -16,11 +16,17 @@ from langflow.api.v1.folders import router as folders_router
 from langflow.api.v1.knowledge_bases import router as knowledge_bases_router
 from langflow.api.v1.login import router as login_router
 from langflow.api.v1.mcp import router as mcp_router
+from langflow.api.v1.memgraph import router as memgraph_router
 from langflow.api.v1.mcp_projects import router as mcp_projects_router
 from langflow.api.v1.memories import router as memories_router
 from langflow.api.v1.model_options import router as model_options_router
 from langflow.api.v1.models import router as models_router
 from langflow.api.v1.monitor import router as monitor_router
+from langflow.api.v1.ontol import router as ontol_router
+from langflow.api.v1.ontol import char_scene_router as ontol_char_scene_router
+from langflow.api.v1.ontol import data_his_router as ontol_data_his_router
+from langflow.api.v1.ontol import node_scene_router as ontol_node_scene_router
+from langflow.api.v1.ontol import scene_router as ontol_scene_router
 from langflow.api.v1.openai_responses import router as openai_responses_router
 from langflow.api.v1.projects import router as projects_router
 from langflow.api.v1.starter_projects import router as starter_projects_router
@@ -50,11 +56,17 @@ __all__ = [
     "knowledge_bases_router",
     "login_router",
     "mcp_projects_router",
+    "memgraph_router",
     "mcp_router",
     "memories_router",
     "model_options_router",
     "models_router",
     "monitor_router",
+    "ontol_router",
+    "ontol_scene_router",
+    "ontol_node_scene_router",
+    "ontol_char_scene_router",
+    "ontol_data_his_router",
     "openai_responses_router",
     "projects_router",
     "starter_projects_router",

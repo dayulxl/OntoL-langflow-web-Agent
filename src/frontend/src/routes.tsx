@@ -41,6 +41,9 @@ import McpClientPage from "./pages/SettingsPage/pages/McpClientPage";
 import ModelProvidersPage from "./pages/SettingsPage/pages/ModelProvidersPage";
 import MessagesPage from "./pages/SettingsPage/pages/messagesPage";
 import ShortcutsPage from "./pages/SettingsPage/pages/ShortcutsPage";
+import OntolModelingPage from "./pages/OntolModelingPage";
+import OntolSandboxPage from "./pages/OntolSandboxPage";
+import OntolSemanticPage from "./pages/OntolSemanticPage";
 import ViewPage from "./pages/ViewPage";
 
 const AdminPage = lazy(() => import("./pages/AdminPage"));
@@ -114,6 +117,18 @@ const router = createBrowserRouter(
                   <Route
                     path="flows/"
                     element={<HomePage key="flows" type="flows" />}
+                  />
+                  <Route
+                    path="ontol-semantic/"
+                    element={<OntolSemanticPage />}
+                  />
+                  <Route
+                    path="ontol-modeling/"
+                    element={<OntolModelingPage />}
+                  />
+                  <Route
+                    path="ontol-sandbox/"
+                    element={<OntolSandboxPage />}
                   />
                   <Route
                     path="components/"

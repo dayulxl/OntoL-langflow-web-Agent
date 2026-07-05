@@ -1,67 +1,25 @@
-import { useTranslation } from "react-i18next";
-import { FaDiscord, FaGithub } from "react-icons/fa";
-import ShadTooltip from "@/components/common/shadTooltipComponent";
-import { Button } from "@/components/ui/button";
-import { DISCORD_URL, GITHUB_URL } from "@/constants/constants";
-import { Case } from "@/shared/components/caseComponent";
-import { useDarkStore } from "@/stores/darkStore";
-import { formatNumber } from "@/utils/utils";
+import { useCustomNavigate } from "@/customization/hooks/use-custom-navigate";
 
 export const LangflowCounts = () => {
-  const { t } = useTranslation();
-  const stars: number | undefined = useDarkStore((state) => state.stars);
-  const discordCount: number = useDarkStore((state) => state.discordCount);
+  const navigate = useCustomNavigate();
 
-  const formattedStars = formatNumber(stars);
-  const formattedDiscordCount = formatNumber(discordCount);
+  const menuItems = [
+    { label: "本体语义", path: "/ontol-semantic" },
+    { label: "本体建模", path: "/ontol-modeling" },
+    { label: "沙盘推演", path: "/ontol-sandbox" },
+  ];
 
   return (
-    <div className="flex items-center gap-3">
-      <ShadTooltip
-        content={t("header.goToGithub")}
-        side="bottom"
-        styleClasses="z-10"
-      >
-        <Button
-          unstyled
-          onClick={() => window.open(GITHUB_URL, "_blank")}
-          className="hit-area-hover flex items-center gap-2 rounded-md p-1 text-muted-foreground"
+    <div className="flex items-center gap-1">
+      {menuItems.map((item) => (
+        <button
+          key={item.label}
+          onClick={() => navigate(item.path)}
+          className="hit-area-hover rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
         >
-          <div className="relative items-center rounded-md px-2 py-1 flex">
-            <FaGithub className="h-4 w-4" />
-            <Case condition={Boolean(formattedStars) && formattedStars !== "0"}>
-              <span className="text-xs font-semibold pl-2">
-                {formattedStars}
-              </span>
-            </Case>
-          </div>
-        </Button>
-      </ShadTooltip>
-
-      <ShadTooltip
-        content={t("header.goToDiscord")}
-        side="bottom"
-        styleClasses="z-10"
-      >
-        <Button
-          unstyled
-          onClick={() => window.open(DISCORD_URL, "_blank")}
-          className="hit-area-hover flex items-center gap-2 rounded-md p-1 text-muted-foreground"
-        >
-          <div className="relative items-center rounded-md px-2 py-1 flex">
-            <FaDiscord className="h-4 w-4" />
-            <Case
-              condition={
-                Boolean(formattedDiscordCount) && formattedDiscordCount !== "0"
-              }
-            >
-              <span className="text-xs font-semibold pl-2">
-                {formattedDiscordCount}
-              </span>
-            </Case>
-          </div>
-        </Button>
-      </ShadTooltip>
+          {item.label}
+        </button>
+      ))}
     </div>
   );
 };

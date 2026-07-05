@@ -25,6 +25,23 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
+# ── 排除不在 Alembic 管理范围内的表 ，基本上都是本体配置表 ──
+ONTOL_TABLES = frozenset({
+    "ontol_model",
+    "ontol_model_attr",
+    "ontol_model_scene",
+    "ontol_node_scene_relation",
+    "ontol_char_scene_relation",
+    "ontol_data_his",
+})
+
+def include_object(obj, name, type_, reflected, compare_to):
+    """跳过 ontol_model / ontol_model_attr 的表级别操作"""
+    if type_ == "table" and name in ONTOL_TABLES:
+        return False
+    return True
+
+
 NAMING_CONVENTION = {
     "ix": "ix_%(column_0_label)s",
     "uq": "uq_%(table_name)s_%(column_0_name)s",
@@ -63,6 +80,7 @@ def run_migrations_offline() -> None:
         "literal_binds": True,
         "dialect_opts": {"paramstyle": "named"},
         "render_as_batch": True,
+        "include_object": include_object,
     }
 
     # Only add prepare_threshold for PostgreSQL
@@ -95,6 +113,7 @@ def _do_run_migrations(connection):
         "connection": connection,
         "target_metadata": target_metadata,
         "render_as_batch": True,
+        "include_object": include_object,
     }
 
     # Only add prepare_threshold for PostgreSQL

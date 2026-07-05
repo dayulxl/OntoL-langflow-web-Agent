@@ -1,0 +1,40 @@
+[project]
+name = "lfx-memgraph"
+version = "0.1.0"
+description = "Memgraph / Neo4j graph database component for Langflow"
+readme = "README.md"
+requires-python = ">=3.10,<3.15"
+license = { text = "MIT" }
+authors = [
+    { name = "OntoL", email = "contact@ontol.ai" },
+]
+keywords = ["langflow", "lfx", "extension", "bundle", "memgraph", "neo4j", "graph", "cypher"]
+
+dependencies = [
+    "lfx>=1.10.0.dev0,<2.0.0",
+    "neo4j>=5.0.0",
+    "langchain-community>=0.4.1,<1.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/dayulxl/OntoL-langflow-web-Agent"
+Documentation = "https://docs.langflow.org/extensions"
+
+[project.entry-points."langflow.extensions"]
+lfx-memgraph = "lfx_memgraph"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/lfx_memgraph"]
+include = ["src/lfx_memgraph/extension.json", "src/lfx_memgraph/components/**/*.py"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "src/lfx_memgraph",
+    "extension.json",
+    "README.md",
+    "pyproject.toml",
+]

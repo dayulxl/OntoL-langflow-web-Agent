@@ -21,11 +21,17 @@ from langflow.api.v1 import (
     knowledge_bases_router,
     login_router,
     mcp_projects_router,
+    memgraph_router,
     mcp_router,
     memories_router,
     model_options_router,
     models_router,
     monitor_router,
+    ontol_router,
+    ontol_scene_router,
+    ontol_node_scene_router,
+    ontol_char_scene_router,
+    ontol_data_his_router,
     openai_responses_router,
     projects_router,
     starter_projects_router,
@@ -80,6 +86,7 @@ router_v1.include_router(memories_router)
 router_v1.include_router(mcp_router)
 router_v1.include_router(voice_mode_router)
 router_v1.include_router(mcp_projects_router)
+router_v1.include_router(memgraph_router)
 router_v1.include_router(openai_responses_router)
 router_v1.include_router(models_router)
 router_v1.include_router(model_options_router)
@@ -89,6 +96,12 @@ router_v1.include_router(authz_roles_router)
 router_v1.include_router(authz_role_assignments_router)
 router_v1.include_router(authz_teams_router)
 router_v1.include_router(authz_me_router)
+router_v1.include_router(ontol_router)
+router_v1.include_router(ontol_scene_router)
+router_v1.include_router(ontol_node_scene_router)
+router_v1.include_router(ontol_char_scene_router)
+router_v1.include_router(ontol_data_his_router)
+router_v1.include_router(ontol_data_his_router)
 
 
 # Extension reload is Mode A (local-dev / pip-installed) only.  The route is
