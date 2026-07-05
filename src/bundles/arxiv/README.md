@@ -1,25 +1,24 @@
-# lfx-arxiv
+# lfx-arxiv — arXiv 学术搜索
 
-arXiv search component as a standalone Langflow Extension Bundle.
+arXiv 学术论文搜索组件，作为独立的 Langflow 扩展包发布。
 
-This is the second-pilot port that validates
-[`src/bundles/PORTING.md`](../PORTING.md) — the documented recipe for
-extracting an in-tree provider into a standalone Bundle distribution.
-The bundle ships a single component, `ArXivComponent`, which queries
-arXiv's public Atom API for paper metadata.
+这是第二个验证 [`src/bundles/PORTING.md`](../PORTING.md) 的试点移植项目，该文档记录了将内置提供商提取为独立 Bundle 的标准流程。本包包含单个组件 `ArXivComponent`，通过 arXiv 的公开 Atom API 查询论文元数据。
 
-## Install
+## 安装
 
 ```bash
 pip install lfx-arxiv
 ```
 
-The bundle is registered automatically via the `langflow.extensions`
-entry-point.  After install, restart your Langflow server; the
-`ArXivComponent` will appear in the palette under the `arxiv` bundle
-group.
+通过 `langflow.extensions` 入口点自动注册。安装后重启 Langflow 服务，`ArXivComponent` 将出现在组件面板的 `arxiv` 分组中。
 
-## Develop
+## 组件
+
+| 组件 | 说明 |
+|------|------|
+| `ArXivComponent` | 查询 arXiv 论文元数据（标题、作者、摘要、链接） |
+
+## 开发
 
 ```bash
 cd src/bundles/arxiv
@@ -27,17 +26,15 @@ pip install -e .
 lfx extension validate .
 ```
 
-## Manifest
+## 清单文件
 
-The extension manifest is shipped at
-`src/lfx_arxiv/extension.json` and points at the bundle at
-`components/arxiv`.  Components register under the canonical
-namespaced ID `ext:arxiv:ArXivComponent@official`.
+扩展清单文件位于 `src/lfx_arxiv/extension.json`，指向 `components/arxiv` 目录。组件以规范的命名空间 ID 注册：`ext:arxiv:ArXivComponent@official`。
 
-## Migration
+## 迁移
 
-Saved flows referencing the legacy class name `ArXivComponent` or the
-old import paths `lfx.components.arxiv.arxiv.ArXivComponent` /
-`lfx.components.arxiv.ArXivComponent` are rewritten to the new
-namespaced ID by the migration table in
-`src/lfx/src/lfx/extension/migration/migration_table.json`.
+已保存的工作流中引用的旧版类名 `ArXivComponent` 或旧导入路径（`lfx.components.arxiv.arxiv.ArXivComponent` / `lfx.components.arxiv.ArXivComponent`）会被迁移表自动重写为新的命名空间 ID。迁移表位于 `src/lfx/src/lfx/extension/migration/migration_table.json`。
+
+## 相关文档
+
+- [Bundle 开发指南](../README.md)
+- [扩展包 API 契约](../../BUNDLE_API.md)
