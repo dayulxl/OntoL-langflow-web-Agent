@@ -517,7 +517,7 @@ complete = [
     "langflow-base[assemblyai]",
     # Data processing
     "langflow-base[datasets]",
-    "langflow-base[fastparquet]",
+    # "langflow-base[fastparquet]",  # 需要 MSVC 编译工具，Windows 上暂时禁用
     # Vision / ML
     "langflow-base[vlmrun]",
     "langflow-base[cuga]",
