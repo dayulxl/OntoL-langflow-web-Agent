@@ -126,6 +126,13 @@ export const AccountMenu = () => {
 
           <div>
             <HeaderMenuItemButton
+              onClick={() => navigate("/flows")}
+            >
+              <span className="flex items-center gap-2">
+                项目管理
+              </span>
+            </HeaderMenuItemButton>
+            <HeaderMenuItemButton
               onClick={() => navigate("/ontol-semantic")}
             >
               <span className="flex items-center gap-2">

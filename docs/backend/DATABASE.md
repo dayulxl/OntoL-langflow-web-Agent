@@ -337,3 +337,43 @@ def include_object(obj, name, type_, reflected, compare_to):
 
 每次手工新增表时，**必须**同步更新 `ONTOL_TABLES` 集合。
 
+---
+
+## 九、文件存储
+
+### 文件存储路径
+
+上传文件（用户上传的图片、文档等）存储在 Langflow 的 `config_dir` 下：
+
+```
+默认路径: C:\Users\<用户名>\AppData\Local\langflow\langflow\<操作>
+          └── Linux/macOS: ~/.langflow/langflow/
+```
+
+通过的 Storage Service: `src/backend/base/langflow/services/storage/local.py`
+
+**路径配置优先级：**
+
+1. 环境变量 `LANGFLOW_CONFIG_DIR` → 直接使用
+2. 未设置 → 系统默认缓存目录
+
+```bash
+# 自定义文件存储位置
+export LANGFLOW_CONFIG_DIR=D:\my-langflow-data
+
+# Docker 部署时建议挂载持久化目录
+docker run -v /data/langflow:/root/.langflow langflowai/langflow:latest
+```
+
+### 文件管理
+
+| 操作 | 方式 |
+|------|------|
+| 上传 | 前端 `/assets/files` 页面拖拽或点击上传 |
+| 下载 | 文件列表中点击下载按钮 |
+| 删除 | 勾选文件后点击删除 |
+
+### 安全机制
+
+`StorageService` 内置路径穿越防护：上传的文件名如果包含 `..` 或 `/` 会被拒绝，防止恶意攻击者通过文件名读取系统任意文件。
+

@@ -4,6 +4,7 @@ export const LangflowCounts = () => {
   const navigate = useCustomNavigate();
 
   const menuItems = [
+    { label: "项目管理", path: "/flows" },
     { label: "本体语义", path: "/ontol-semantic" },
     { label: "本体建模", path: "/ontol-modeling" },
     { label: "沙盘推演", path: "/ontol-sandbox" },

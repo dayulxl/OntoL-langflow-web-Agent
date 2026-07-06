@@ -99,6 +99,17 @@ db = get_graph_db()
 db.query("MATCH (n) RETURN n LIMIT 10")
 ```
 
+## 文件存储
+
+上传文件（图片、文档等）默认存储在：
+
+```
+Windows:  C:\Users\<用户名>\AppData\Local\langflow\langflow\
+Linux:    ~/.langflow/langflow/
+```
+
+可通过 `LANGFLOW_CONFIG_DIR` 环境变量自定义路径。详见 [数据库文档](../docs/backend/DATABASE.md#九文件存储)。
+
 ## 开发
 
 ```bash
