@@ -13,7 +13,7 @@ const SUPPORTED_LANGUAGES = [
 ] as const;
 
 const normalizeLanguage = (lang?: string | null): string => {
-  if (!lang) return "en";
+  if (!lang) return "zh-Hans";
 
   if (
     SUPPORTED_LANGUAGES.includes(lang as (typeof SUPPORTED_LANGUAGES)[number])
@@ -37,11 +37,11 @@ const normalizeLanguage = (lang?: string | null): string => {
     return baseLang;
   }
 
-  return "en";
+  return "zh-Hans";
 };
 
 export const detectedLang = normalizeLanguage(
-  localStorage.getItem("languagePreference") || "en",
+  localStorage.getItem("languagePreference") || "zh-Hans",
 );
 
 const i18n = i18next.createInstance();
@@ -55,7 +55,7 @@ i18n.use(initReactI18next).init({
     en: { translation: en },
   },
   lng: detectedLang,
-  fallbackLng: "en",
+  fallbackLng: "zh-Hans",
   returnNull: false,
   returnEmptyString: false,
   interpolation: {
@@ -71,7 +71,7 @@ export async function loadLanguage(lang: string): Promise<void> {
     const messages = await import(`./locales/${lang}.json`);
     i18n.addResourceBundle(lang, "translation", messages.default);
   } catch {
-    // Unknown locale — no bundle file exists. i18next's fallbackLng: "en" takes over.
+    // Unknown locale — no bundle file exists. i18next's fallbackLng: "zh-Hans" takes over.
   }
 }
 

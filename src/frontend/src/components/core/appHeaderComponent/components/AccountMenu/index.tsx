@@ -129,7 +129,7 @@ export const AccountMenu = () => {
               onClick={() => navigate("/flows")}
             >
               <span className="flex items-center gap-2">
-                项目管理
+                场景管理
               </span>
             </HeaderMenuItemButton>
             <HeaderMenuItemButton
@@ -151,6 +151,13 @@ export const AccountMenu = () => {
             >
               <span className="flex items-center gap-2">
                 沙盘推演
+              </span>
+            </HeaderMenuItemButton>
+            <HeaderMenuItemButton
+              onClick={() => navigate("/ontol-generate")}
+            >
+              <span className="flex items-center gap-2">
+                生成本体
               </span>
             </HeaderMenuItemButton>
           </div>
